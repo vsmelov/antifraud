@@ -12,11 +12,11 @@ if 0:
 
 if 1:
     setup = """
-    import random
-    import make_set_cython
-    import make_set_python
-    A = [bytes([random.randint(0, 255) for i in range(3*10000)]) for j in range(10)]
-    B = [bytes([random.randint(0, 255) for i in range(3*10000)]) for j in range(10)]
+import random
+import make_set_cython
+import make_set_python
+A = [bytes([random.randint(0, 255) for i in range(3*10000)]) for j in range(10)]
+B = [bytes([random.randint(0, 255) for i in range(3*10000)]) for j in range(10)]
         """
 
     code_c = """make_set_cython.detect_users(A[random.randint(0, 9)], B[random.randint(0, 9)])"""
