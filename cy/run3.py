@@ -36,7 +36,7 @@ B = bytes([random.randint(0, 255) for i in range(3*10000)])
     print("python2: {}".format(t_p2))
 
 
-if 1:
+if 0:
     import line_profiler
     A = bytes([random.randint(0, 255) for i in range(3 * 10000)])
     B = bytes([random.randint(0, 255) for i in range(3 * 10000)])
