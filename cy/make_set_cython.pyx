@@ -1,16 +1,13 @@
 # distutils: language = c++
+# distutils: define_macros=CYTHON_TRACE=1
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: initializedcheck=False
 # cython: cdivision=True
 # cython: language_level=3
-
-"""
 # cython: profile=True
 # cython: linetrace=True
 # cython: binding=True
-# distutils: define_macros=CYTHON_TRACE=1
-"""
 
 from libcpp.string cimport string
 from unordered_set cimport unordered_set
@@ -42,7 +39,7 @@ cdef unordered_set[int]* _bytes2set(object buf):
 def bytes2set(object buf):
     _bytes2set(buf)
 
-cpdef detect_users(object nets_bytes_1, object nets_bytes_2):
+def detect_users(object nets_bytes_1, object nets_bytes_2):
     cdef unordered_set[int]* set1 = _bytes2set(nets_bytes_1)
     cdef unordered_set[int]* set2 = _bytes2set(nets_bytes_2)
     cdef int n_same = 0
@@ -53,7 +50,7 @@ cpdef detect_users(object nets_bytes_1, object nets_bytes_2):
                 return True
     return False
 
-cpdef detect_users2(object nets_bytes_1, object nets_bytes_2):
+def detect_users2(object nets_bytes_1, object nets_bytes_2):
     cdef unordered_set[int]* set1 = _bytes2set(nets_bytes_1)
     cdef Py_buffer view
     PyObject_GetBuffer(nets_bytes_2, &view, PyBUF_SIMPLE)
