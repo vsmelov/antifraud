@@ -4,13 +4,10 @@
 # cython: initializedcheck=False
 # cython: cdivision=True
 # cython: language_level=3
-
-"""
 # cython: profile=True
 # cython: linetrace=True
 # cython: binding=True
 # distutils: define_macros=CYTHON_TRACE=1
-"""
 
 from libcpp.string cimport string
 from unordered_set cimport unordered_set

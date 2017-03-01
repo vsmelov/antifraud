@@ -23,7 +23,7 @@ B = bytes([random.randint(0, 255) for i in range(3*10000)])
     code_c2 = """make_set_cython.detect_users2(A, B)"""
     code_p = """make_set_python.detect_users(A, B)"""
     code_p2 = """make_set_python.detect_users2(A, B)"""
-    number = 100
+    number = 10
 
     t_c = timeit.timeit(code_c, number=number, setup=setup) / number
     t_c2 = timeit.timeit(code_c2, number=number, setup=setup) / number
@@ -36,7 +36,7 @@ B = bytes([random.randint(0, 255) for i in range(3*10000)])
     print("python2: {}".format(t_p2))
 
 
-if 0:
+if 1:
     import line_profiler
     A = bytes([random.randint(0, 255) for i in range(3 * 10000)])
     B = bytes([random.randint(0, 255) for i in range(3 * 10000)])
