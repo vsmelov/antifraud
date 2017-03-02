@@ -1,4 +1,11 @@
 # distutils: language = c++
+"""
+Объявление unordered_set для чисто c++ хэш-таблицы
+Полностью повторяет этот файл
+https://github.com/cython/cython/blob/master/Cython/Includes/libcpp/unordered_set.pxd
+Но добавлены методы reserve и bucket_count
+"""
+
 from libcpp.utility cimport pair
 ctypedef size_t size_type
 

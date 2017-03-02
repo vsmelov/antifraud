@@ -1,2 +1,7 @@
 python3 setup.py build_ext --inplace
 rm -rf build/ __pycache__/
+
+
+docker run -d -p 27017:27017 --name some-mongo mongo:3
+docker build .
+docker run -d -p 27017:27017 --name some-mongo
