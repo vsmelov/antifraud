@@ -1,5 +1,10 @@
+# distutils: language=c++
+"""
+Очень-очень быстрый hash table
+"""
+
 from libcpp.utility cimport pair
-from libc.stdint cimport uint64_t, int64_t
+from libc.stdint cimport uint64_t
 
 
 cdef extern from "sparsehash/dense_hash_set" namespace "google":
@@ -29,10 +34,6 @@ cdef extern from "sparsehash/dense_hash_set" namespace "google":
         void rehash(uint64_t n)
         dense_hash_map()
         dense_hash_map(uint64_t n)
-
-        # pair[iterator, bint] insert(K&)
-        # iterator insert(iterator, K&)
-
         iterator find(K&)
         void set_empty_key(K&)
         void set_deleted_key(K& key)
@@ -43,9 +44,4 @@ cdef extern from "sparsehash/dense_hash_set" namespace "google":
         void clear()
         void clear_no_resize()
         pair[iterator, iterator] equal_range(K& k)
-
-
         pair[iterator, bint] insert(const K&)
-        # template <class InputIterator> void insert(InputIterator f, InputIterator l) {
-        # void insert(const_iterator f, const_iterator l) {
-        # iterator insert(iterator, const value_type& obj)   {

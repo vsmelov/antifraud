@@ -1,7 +1,7 @@
 python3 setup.py build_ext --inplace
-rm -rf build/ __pycache__/
+sudo rm -rf build/ __pycache__/ make_set_cython.cp*
 
 
 docker run -d -p 27017:27017 --name some-mongo mongo:3
 docker build .
-docker run -d -p 27017:27017 --name some-mongo
+docker run -p 80:80 --link=some-mongo -v /home/vs/pr/antifraud/app:/app --name app app
