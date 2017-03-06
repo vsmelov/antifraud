@@ -12,35 +12,32 @@
 # distutils: define_macros=CYTHON_TRACE=1
 """
 
-from libcpp.string cimport string
-from cython.operator cimport dereference as deref
 from cpython.buffer cimport PyBUF_SIMPLE, PyObject_GetBuffer, PyBuffer_Release
 from dense_hash_set cimport dense_hash_set
-
 ctypedef unsigned char uchar
 
 cpdef inline int bytes2subnet(uchar* buf, int i):
     """ Компонует buf[i:i+3] в один int обозначающий подсеть """
     return (256*buf[i] + buf[i+1])*256 + buf[i+2]
 
-
 cpdef inline bytes subnet2bytes(int subnet):
     """ Раскладывает int обозначающий подсеть по трем байтам"""
-    return int.to_bytes(subnet, 3, 'big')
+    return bytes([subnet / 256 / 256 % 256,
+                  subnet / 256 % 256,
+                  subnet % 256])
 
-# from libc.stdint cimport uintptr_t
 
 cdef dense_hash_set[int]* _bytes2set_densehash(bytes subnets_bytes):
     """ Составляет хэш-таблицу из байтов subnets_bytes """
     # для быстрой работы с байтами, читаем их напрямую через memoryview
     cdef Py_buffer view
     PyObject_GetBuffer(subnets_bytes, &view, PyBUF_SIMPLE)
-    cdef uchar* buf = <uchar*> view.buf  # указатель на массив байтов
-    cdef int i = 0
+    cdef uchar* buf = <uchar*> view.buf  # указатель на массив байт
     cdef dense_hash_set[int]* xxset = new dense_hash_set[int]()
     xxset.set_empty_key(-1)  # ключ, который никогда не будет использован
+    xxset.max_load_factor(0.3)  # делаем таблицу более разреженной
     xxset.resize(view.len/3)  # сразу выделяем много памяти, чтобы не ресайзить
-    cdef int subnet
+    cdef int subnet, i
     try:
         for i in range(0, view.len, 3):
             subnet = bytes2subnet(buf, i)
@@ -55,7 +52,7 @@ def bytes2set_densehash(bytes subnets_bytes):
 
 def detect_users_densehash(bytes user1_bytes, bytes user2_bytes):
     """ Проверяет двух пользователей на наличие у них одинаковых подсетей
-        Возвращает True если мошенники, иначе False """
+        Возвращает список одинаковых подсетей если мошенники, иначе False """
     if len(user1_bytes) < 2 or len(user2_bytes) < 2:
         # для пользователей, у которых заведомо не хватает сетей
         return False
@@ -70,11 +67,10 @@ def detect_users_densehash(bytes user1_bytes, bytes user2_bytes):
     # для быстрой работы с байтами, читаем их напрямую через memoryview
     cdef Py_buffer view
     PyObject_GetBuffer(user2_bytes, &view, PyBUF_SIMPLE)
-    cdef uchar* buf = <uchar*> view.buf  # указатель на массив байтов
+    cdef uchar* buf = <uchar*> view.buf  # указатель на массив байт
     cdef int count_same_subnet = 0
     cdef list list_same_subnet = []
-    cdef int i
-    cdef int subnet
+    cdef int subnet, i
     try:
         # бегаем по всем сетям второго пользователя
         for i in range(0, view.len, 3):
@@ -82,21 +78,23 @@ def detect_users_densehash(bytes user1_bytes, bytes user2_bytes):
             subnet = bytes2subnet(buf, i)
             if user1_set.find(subnet) != user1_set.end():
                 count_same_subnet += 1
-                list_same_subnet.append(subnet)
-                if 0:
-                    print('bytes:', buf[i], buf[i+1], buf[i+2])
-                    print('bytes:', bytes([buf[i], buf[i+1], buf[i+2]]))
-                    print('int:', bytes2subnet(buf, i))
-                    b = subnet2bytes(bytes2subnet(buf, i))
-                    print('bytes:', b)
-                    print('bytes:', b[0], b[1], b[2])
-                    print()
+                list_same_subnet.append(
+                    bytes([buf[i], buf[i+1], buf[i+2]])
+                )
+                # print('bytes:', buf[i], buf[i+1], buf[i+2])
+                # print('bytes:', bytes([buf[i], buf[i+1], buf[i+2]]))
+                # print('int:', bytes2subnet(buf, i))
+                # b = subnet2bytes(bytes2subnet(buf, i))
+                # print('bytes:', b)
+                # print('bytes:', b[0], b[1], b[2])
+                # print()
                 if count_same_subnet >= 2:
                     return list_same_subnet
+        else:
+            return False
     finally:
+        del user1_set
         PyBuffer_Release(&view)
-    del user1_set
-    return False
 
 
 # Вариант с использованием Python set:
