@@ -146,9 +146,11 @@ class SafeMongoProxy:
 
     def __getitem__(self, key):
         """ Оборачивает метод в SafeMongoProxy """
-        return SafeMongoProxy(getattr(self.conn, key), self.n_tries)
+        conn = object.__getattribute__(self, 'conn')
+        n_tries = object.__getattribute__(self, 'n_tries')
+        return SafeMongoProxy(conn.key, n_tries)
 
-    def __getattribute__(self, item):
+    def __getattribute__(self, key):
         """ Если метод исполняемый, возвращает обертку SafeExecutableProxy,
          в противном случае вызывает __getitem__(key) """
         if key in MONGO_MEMBERS:
