@@ -38,9 +38,9 @@ def check_perf():
         t_total_all += t_total
         t_read_all += t_read
         t_calc_all += t_calc
-    print("Check in {}sec (read: {}, calc: {})"
+    print("Check 10000 in {}sec (read: {}, calc: {})"
           .format(t_total_all, t_read_all, t_calc_all))
-    print("Check in {}sec (read: {}, calc: {})"
+    print("Check 1 in {}sec (read: {}, calc: {})"
           .format(t_total_all/N, t_read_all/N, t_calc_all/N))
 
 check_perf()

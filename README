@@ -2,8 +2,4 @@ docker run -d -p 27017:27017 --name some-mongo mongo:3
 docker build .
 docker run -p 80:80 --link=some-mongo -v /home/vs/pr/antifraud/app:/app --name app app
 
-docker exec -ti app bash
-cd cy
-python3 setup.py build_ext --inplace
-cd ..
-python3 perf.py
+docker exec -ti app python3 perf.py
